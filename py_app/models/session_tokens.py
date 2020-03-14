@@ -1,4 +1,5 @@
 from main import db
+import datetime
 
 
 class SessionTokens(db.Model):
@@ -16,3 +17,10 @@ class SessionTokens(db.Model):
 
     def __repr__(self):
         return '<Token %r>' % self.login
+
+    @staticmethod
+    def remove_expired_tokens():
+        current_time = datetime.now()
+        expired = SessionTokens.query.filter_by(SessionTokens.expiry_date < current_time).all()
+        db.session.remove(expired)
+        db.session.commit()
