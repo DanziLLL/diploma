@@ -1,31 +1,25 @@
-from flask import Flask, request
-from flask_restful import Resource, Api
-from sqlalchemy import create_engine
-import yaml
-import inv_auth
-from json import dumps
-#from flask.ext.jsonpify import jsonify
+from flask import Flask
+from config import Config
+from flask_sqlalchemy import SQLAlchemy
+from flask_restful import Api
 
 
 app = Flask(__name__)
-api = Api(app)
+app.config.from_object(Config)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@mariadb/inventory_app'.format(app.config['MYSQL_USER'],
+                                                                                     app.config['MYSQL_PASSWORD'])
+db = SQLAlchemy(app)
 
 
-
-def load_config():
-    with open('config.yml') as f:
-        yaml_data = f.read()
-    f.close()
-    return yaml.safe_load(yaml_data)
-
-class Employees(Resource):
-    def get(self):
-        conn = db_connect.connect() # connect to database
-        query = conn.execute("")
-        return {'employees': [i[0] for i in query.cursor.fetchall()]}
+@app.route('/')
+def index():
+    return "Hello, World!"
 
 
 if __name__ == '__main__':
-    conf = load_config()
-    db_connect = create_engine("mysql+pymysql://{}:{}@mariadb:3306/".format(conf['mysql_user'], conf['mysql_password']))
-    app.run(port='9000')
+    from inv.auth import Auth
+    api = Api(app)
+    api.add_resource(Auth, "/api/auth", "/api/auth/")
+    app.run(host='0.0.0.0', port='9000')
+
+

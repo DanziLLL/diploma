@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: mariadb
--- Время создания: Мар 09 2020 г., 13:42
+-- Время создания: Мар 14 2020 г., 08:26
 -- Версия сервера: 10.4.12-MariaDB-1:10.4.12+maria~bionic
 -- Версия PHP: 7.4.1
 
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- База данных: `inventory_app`
 --
+CREATE DATABASE IF NOT EXISTS `inventory_app` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `inventory_app`;
 
 -- --------------------------------------------------------
 
@@ -48,6 +50,13 @@ CREATE TABLE `users` (
   `hashed_pass` varchar(128) NOT NULL,
   `access_level` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Дамп данных таблицы `users`
+--
+
+INSERT INTO `users` (`id`, `login`, `hashed_pass`, `access_level`) VALUES
+(1, 'danzilll', 'de0a490f04f44ce66471a8013a13428c', 'admin');
 
 --
 -- Индексы сохранённых таблиц
@@ -82,7 +91,7 @@ ALTER TABLE `session_tokens`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
