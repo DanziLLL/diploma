@@ -1,8 +1,16 @@
 from main import db
 from datetime import datetime
+from models.assets.computer.cpu import Cpu
+from models.assets.computer.misc import Misc
+from models.assets.computer.mobo import Mobo
+from models.assets.computer.network import Network
+from models.assets.computer.ram import Ram
+from models.assets.computer.storage import Storage
+from models.assets.computer.video import Video
 
 
 class SessionTokens(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     model = db.Column(db.String(256))
     hostname = db.Column(db.String(256), unique=True, nullable=False)

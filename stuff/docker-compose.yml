@@ -9,8 +9,6 @@ services:
         container_name: nginx
         ports:
             - "8080:80"
-        depends_on:
-            - python_app
         networks:
             - inv
 
@@ -19,8 +17,6 @@ services:
         container_name: mariadb
         ports:
             - "3306:3306"
-        depends_on:
-            - nginx
         environment:
             - MYSQL_ROOT_PASSWORD=P@ssw0rd
         networks:
@@ -30,6 +26,8 @@ services:
         build: ../py_app
         image: py_app:latest
         container_name: python_app
+        depends_on:
+            - mariadb
         environment: 
             - APPLICATION_SETTINGS=config.py
         ports:
