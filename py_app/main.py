@@ -2,14 +2,34 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
-from inv.cron import create_cron
+from logging.config import dictConfig
+import atexit
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@mariadb/inventory_app'.format(app.config['MYSQL_USER'],
-                                                                                     app.config['MYSQL_PASSWORD'])
+app.config.update(
+    {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.\
+        format(app.config['MYSQL_USER'], app.config['MYSQL_PASSWORD'])})
 db = SQLAlchemy(app)
+
+
+def create_logger():
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }},
+        'handlers': {'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        }},
+        'root': {
+            'level': 'INFO',
+            'handlers': ['wsgi']
+        }
+    })
 
 
 @app.route('/')
@@ -18,14 +38,21 @@ def index():
 
 
 def create_api():
+    from inv.auth import Auth
     api = Api(app)
     api.add_resource(Auth, "/api/auth", "/api/auth/")
 
 
 if __name__ == '__main__':
-    from inv.auth import Auth
+    create_logger()
+
     create_api()
-    create_cron()
+
+    from inv.cron import create_cron
+    cron = create_cron()
+    cron.start()
+    atexit.register(lambda: cron.shutdown())
+
     app.run(host='0.0.0.0', port='9000')
 
 

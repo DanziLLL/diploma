@@ -4,10 +4,13 @@ from datetime import datetime
 
 class SessionTokens(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    token = db.Column(db.String(256), unique=True, nullable=False)
-    expiry_date = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.String(120), db.ForeignKey('users.id'), nullable=False)
-    access_level = db.Column(db.String(10), nullable=False)
+    model = db.Column(db.String(256))
+    hostname = db.Column(db.String(256), unique=True, nullable=False)
+    cpu = db.Column(db.DateTime, nullable=False)
+    ram = db.Column(db.String(120), db.ForeignKey('users.id'), nullable=False)
+    hdd = db.Column(db.String(10), nullable=False)
+    ip = db.Column(db.String(16), nullable=True)
+    inventory_id = db.Column(db.String(10), unique=True, nullable=False)
 
     def __init__(self, token, expiry_date, user_id, access_level):
         self.token = token

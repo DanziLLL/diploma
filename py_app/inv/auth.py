@@ -19,12 +19,14 @@ class Auth(Resource):
         salted_pass = hashlib.md5((salt + params['password']).encode('utf-8'))
         usr = Users.query.filter_by(login=params['login'], hashed_pass=salted_pass.hexdigest()).first()
         if usr is None:
+            current_app.logger.info('Authorization failed for user {}'.format(params['login']))
             abort(401, description='Authorization failed')
         else:
             token = hashlib.md5((datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-                                 + salted_pass).encode('utf-8')).hexdigest()
+                                 + salted_pass.hexdigest()).encode('utf-8')).hexdigest()
             expiry = datetime.now() + timedelta(hours=1)
             entry = SessionTokens(token, expiry, usr.id, usr.access_level)
             db.session.add(entry)
             db.session.commit()
+            current_app.logger.info('User {} logged in'.format(params['login']))
             return 200, {'Set-Cookie': 'api_token={}'.format(token)}

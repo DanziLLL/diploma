@@ -1,6 +1,8 @@
-import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
 from models.session_tokens import SessionTokens
 
 
 def create_cron():
-    schedule.every(1).minutes.do(SessionTokens.remove_expired_tokens())
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=SessionTokens.remove_expired_tokens, trigger="interval", seconds=60)
+    return scheduler
