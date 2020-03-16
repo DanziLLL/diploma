@@ -9,7 +9,7 @@ import atexit
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config.update(
-    {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.\
+    {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.
         format(app.config['MYSQL_USER'], app.config['MYSQL_PASSWORD'])})
 db = SQLAlchemy(app)
 
@@ -38,9 +38,11 @@ def index():
 
 
 def create_api():
-    from inv.auth import Auth
     api = Api(app)
+    from api.auth import Auth
     api.add_resource(Auth, "/api/auth", "/api/auth/")
+    from api.register import Register
+    api.add_resource(Register, "/api/register", "/api/register/")
 
 
 if __name__ == '__main__':
@@ -48,7 +50,7 @@ if __name__ == '__main__':
 
     create_api()
 
-    from inv.cron import create_cron
+    from cron import create_cron
     cron = create_cron()
     cron.start()
     atexit.register(lambda: cron.shutdown())

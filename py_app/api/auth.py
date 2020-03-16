@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import hashlib
 
 from models.users import Users
-from models.session_tokens import SessionTokens
+from models.tokens.session_tokens import SessionTokens
 from main import db
 
 
@@ -30,3 +30,5 @@ class Auth(Resource):
             db.session.commit()
             current_app.logger.info('User {} logged in'.format(params['login']))
             return 200, {'Set-Cookie': 'api_token={}'.format(token)}
+
+

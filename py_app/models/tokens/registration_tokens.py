@@ -2,18 +2,14 @@ from main import db
 from datetime import datetime
 
 
-class SessionTokens(db.Model):
+class RegistrationTokens(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(256), unique=True, nullable=False)
     expiry_date = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.String(120), db.ForeignKey('users.id'), nullable=False)
-    access_level = db.Column(db.String(10), nullable=False)
 
-    def __init__(self, token, expiry_date, user_id, access_level):
+    def __init__(self, token, expiry_date):
         self.token = token
         self.expiry_date = expiry_date
-        self.user_id = user_id
-        self.access_level = access_level
 
     def __repr__(self):
         return '<Token %r>' % self.login
@@ -21,5 +17,13 @@ class SessionTokens(db.Model):
     @staticmethod
     def remove_expired_tokens():
         current_time = datetime.now()
-        SessionTokens.query.filter(SessionTokens.expiry_date < current_time).delete()
+        RegistrationTokens.query.filter(RegistrationTokens.expiry_date < current_time).delete()
         db.session.commit()
+
+    @staticmethod
+    def is_valid_token(token):
+        q = RegistrationTokens.query.filter_by(token=token).first()
+        if q is not None:
+            return True
+        else:
+            return False
