@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask import current_app, abort, request
+from flask import current_app, request, jsonify
 
 from datetime import datetime, timedelta
 import hashlib
@@ -12,13 +12,15 @@ from main import db
 
 class Register(Resource):
     def post(self):
+
         salt = current_app.config["MD5_SALT"]
         parser = reqparse.RequestParser()
         parser.add_argument("login")
         parser.add_argument("password")
         parser.add_argument("token")
         params = parser.parse_args()
-        salted_pass = hashlib.md5((salt + params['password']).encode('utf-8')).hexdigest()
+        current_app.logger.info('Salt = {}, password = {}, params = '.format(salt, params['password'], params))
+        salted_pass = hashlib.md5((salt + params['password'] + params['login']).encode('utf-8')).hexdigest()
         valid = RegistrationTokens.is_valid_token(params['token'])
         exist = Users.query.filter(Users.login == params['login']).first()
         if valid and exist is None:
@@ -28,11 +30,17 @@ class Register(Resource):
             current_app.logger.info('Created user {}'.format(params['login']))
             RegistrationTokens.query.filter(RegistrationTokens.token == params['token']).delete()
             db.session.commit()
-            return 200, {'status': 'ok', 'user': params['login']}
+            response = jsonify({'status': 'ok', 'user': params['login']})
+            response.status_code = 200
+            return response
         elif valid and exist is not None:
-            return 400, {'status': 'err_already_exists'}
+            response = jsonify({'status': 'err_already_exists'})
+            response.status_code = 400
+            return response
         elif not valid:
-            abort(403, description='Authorization failed')
+            response = jsonify({'status': 'Authorization failed'})
+            response.status_code = 403
+            return response
 
     def get(self):
         api_tok = None
@@ -45,6 +53,10 @@ class Register(Resource):
             entry = RegistrationTokens(token=reg_tok, expiry_date=(datetime.now() + timedelta(days=1)))
             db.session.add(entry)
             db.session.commit()
-            return 200, {'registration_token': reg_tok}
+            response = jsonify({'registration_token': reg_tok})
+            response.status_code = 200
+            return response
         else:
-            abort(403, description='Authorization failed')
+            response = jsonify({'status': 'Authorization failed'})
+            response.status_code = 403
+            return response

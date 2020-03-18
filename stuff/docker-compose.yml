@@ -4,14 +4,6 @@ networks:
     inv:
 
 services:
-    nginx:
-        image: nginx:stable-alpine
-        container_name: nginx
-        ports:
-            - "8080:80"
-        networks:
-            - inv
-
     mariadb:
         image: mariadb:latest
         container_name: mariadb

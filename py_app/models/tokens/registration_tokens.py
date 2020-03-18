@@ -11,9 +11,6 @@ class RegistrationTokens(db.Model):
         self.token = token
         self.expiry_date = expiry_date
 
-    def __repr__(self):
-        return '<Token %r>' % self.login
-
     @staticmethod
     def remove_expired_tokens():
         current_time = datetime.now()

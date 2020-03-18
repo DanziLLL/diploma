@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask import current_app, abort
+from flask import current_app, jsonify
 
 from datetime import datetime, timedelta
 import hashlib
@@ -16,11 +16,13 @@ class Auth(Resource):
         parser.add_argument("login")
         parser.add_argument("password")
         params = parser.parse_args()
-        salted_pass = hashlib.md5((salt + params['password']).encode('utf-8'))
+        salted_pass = hashlib.md5((salt + params['password'] + params['login']).encode('utf-8'))
         usr = Users.query.filter_by(login=params['login'], hashed_pass=salted_pass.hexdigest()).first()
         if usr is None:
             current_app.logger.info('Authorization failed for user {}'.format(params['login']))
-            abort(401, description='Authorization failed')
+            response = jsonify({'status': 'Authorization failed'})
+            response.status_code = 401
+            return response
         else:
             token = hashlib.md5((datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
                                  + salted_pass.hexdigest()).encode('utf-8')).hexdigest()
@@ -29,6 +31,9 @@ class Auth(Resource):
             db.session.add(entry)
             db.session.commit()
             current_app.logger.info('User {} logged in'.format(params['login']))
-            return 200, {'Set-Cookie': 'api_token={}'.format(token)}
+            response = jsonify({'status': 'ok'})
+            response.set_cookie('api_token', value=token)
+            response.status_code = 200
+            return response
 
 
