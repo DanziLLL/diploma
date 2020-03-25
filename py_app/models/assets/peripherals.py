@@ -1,7 +1,7 @@
 from main import db
 
 
-class SessionTokens(db.Model):
+class Peripherals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(256), nullable=False)
     model = db.Column(db.DateTime, nullable=False)

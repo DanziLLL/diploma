@@ -12,7 +12,6 @@ from main import db
 
 class Register(Resource):
     def post(self):
-
         salt = current_app.config["MD5_SALT"]
         parser = reqparse.RequestParser()
         parser.add_argument("login")
