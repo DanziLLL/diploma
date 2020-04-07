@@ -99,8 +99,18 @@ class ComputerApi(Resource):
         v = SessionTokens.is_valid_token(api_tok)
         if v['valid'] and v['access_level'] == 'admin':
             if params['inventory_id'] is not None:
-                data = Computer.get_full_dict(Computer.query.filter_by(inventory_id=params['inventory_id']).first().id)
+                q = Computer.query.filter_by(inventory_id=params['inventory_id']).first()
+                if q is None:
+                    response = jsonify({'status': 'err_not_found'})
+                    response.status_code = 404
+                    return response
+                data = Computer.get_full_dict(q.id)
             elif params['computer_id'] is not None:
+                q = Computer.query.filter_by(id=params['computer_id']).first()
+                if q is None:
+                    response = jsonify({'status': 'err_not_found'})
+                    response.status_code = 404
+                    return response
                 data = Computer.get_full_dict(computer_id=params['computer_id'])
             response = jsonify(data)
             response.status_code = 200
