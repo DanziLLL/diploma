@@ -91,16 +91,17 @@ class ComputerApi(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument("inventory_id")
+        parser.add_argument("computer_id")
         params = parser.parse_args()
         api_tok = None
         if 'api_token' in request.cookies:
             api_tok = request.cookies.get('api_token')
         v = SessionTokens.is_valid_token(api_tok)
         if v['valid'] and v['access_level'] == 'admin':
-            if 'inventory_id' in params:
+            if params['inventory_id'] is not None:
                 data = Computer.get_full_dict(Computer.query.filter_by(inventory_id=params['inventory_id']).first().id)
-            elif 'computer_id' in params:
-                Computer.get_full_dict(computer_id=params['computer_id'])
+            elif params['computer_id'] is not None:
+                data = Computer.get_full_dict(computer_id=params['computer_id'])
             response = jsonify(data)
             response.status_code = 200
             return response
