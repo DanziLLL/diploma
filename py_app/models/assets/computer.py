@@ -43,7 +43,7 @@ class Computer(db.Model):
             elif path[0] == 'video':
                 q = Video.query.filter_by(**f)
             q.update({path[-1]: ch[2][1]})
-            log = Changelog(ch[0], "{} to {}".format(ch[2][0], ch[2][1]), computer_id)
+            log = Changelog(ch[0], "{}: {} to {}".format(path, ch[2][0], ch[2][1]), computer_id)
             db.session.add(log)
             db.session.commit()
             current_app.logger.info("UPDATED")
@@ -101,3 +101,30 @@ class Computer(db.Model):
         return {'cpu': cpu, 'ram': ram, 'platform': platform, 'video': video,
                 'misc': misc, 'storage': storage, 'network': network}
 
+    @staticmethod
+    def delete_all(computer_id=None, hostname=None):
+        if hostname is not None:
+            computer_id = Computer.query.filter_by(hostname=hostname).first().id
+        Cpu.query.filter_by(linked_to=computer_id).delete()
+        Misc.query.filter_by(linked_to=computer_id).delete()
+        Ram.query.filter_by(linked_to=computer_id).delete()
+        Platform.query.filter_by(linked_to=computer_id).delete()
+        Storage.query.filter_by(linked_to=computer_id).delete()
+        Video.query.filter_by(linked_to=computer_id).delete()
+        Network.query.filter_by(linked_to=computer_id).delete()
+        Changelog.query.filter_by(linked_to=computer_id).delete()
+        Computer.query.filter_by(id=computer_id).delete()
+
+    @staticmethod
+    def get_full_dict(computer_id):
+        old = {}
+        data = Computer.get_full_sql(computer_id=computer_id)
+        for k, v in data.items():
+            if isinstance(v, list):
+                old[k] = {}
+                for i in v:
+                    for k1, v1 in i.to_dict().items():
+                        old[k][k1] = v1
+            else:
+                old[k] = v.to_dict()
+        return old

@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 py_app/.idea/
 data_collector/.idea/
+cookies

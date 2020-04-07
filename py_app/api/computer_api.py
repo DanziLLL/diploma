@@ -78,16 +78,7 @@ class ComputerApi(Resource):
         elif entry_exists:
             computer_id = Computer.query.filter_by(hostname=hostname).first().id
             new = item_data
-            old = {}
-            data = Computer.get_full_sql(computer_id=computer_id)
-            for k, v in data.items():
-                if isinstance(v, list):
-                    old[k] = {}
-                    for i in v:
-                        for k1, v1 in i.to_dict().items():
-                            old[k][k1] = v1
-                else:
-                    old[k] = v.to_dict()
+            old = Computer.get_full_dict(computer_id=computer_id)
             changes = Computer.get_diff(json.loads(json.dumps(new, sort_keys=True)),
                                         json.loads(json.dumps(old, sort_keys=True)))
             for ch in changes:  # tuple (type_of_change, item, change)
@@ -96,11 +87,6 @@ class ComputerApi(Resource):
             response = jsonify({'status': 'updated'})
             response.status_code = 200
             return response
-
-
-
-
-
 
     def get(self):
         parser = reqparse.RequestParser()
@@ -111,7 +97,13 @@ class ComputerApi(Resource):
             api_tok = request.cookies.get('api_token')
         v = SessionTokens.is_valid_token(api_tok)
         if v['valid'] and v['access_level'] == 'admin':
-            return 200
+            if 'inventory_id' in params:
+                data = Computer.get_full_dict(Computer.query.filter_by(inventory_id=params['inventory_id']).first().id)
+            elif 'computer_id' in params:
+                Computer.get_full_dict(computer_id=params['computer_id'])
+            response = jsonify(data)
+            response.status_code = 200
+            return response
 
     def delete(self):
         parser = reqparse.RequestParser()
@@ -122,42 +114,25 @@ class ComputerApi(Resource):
             api_tok = request.cookies.get('api_token')
             v = SessionTokens.is_valid_token(api_tok)
         else:
-            response = jsonify({'status': 'err'})
+            response = jsonify({'status': 'err_no_token'})
             response.status_code = 401
             return response
         if v['valid'] and v['access_level'] == 'admin':
-            q = Computer.query.filter(inventory_id=params['inventory_id']).first()
-            q.delete()
-            for i in Computer.get_full_sql(computer_id=q.id):
-                if isinstance(i, list):
-                    for it in i:
-                        it.delete()
-                else:
-                    i.delete()
-            for i in Changelog.query.filter_by(linked_to=q.id):
-                i.delete()
+            q = Computer.query.filter_by(inventory_id=params['inventory_id'])
+            delete_id = q.first().id
+            Computer.delete_all(delete_id)
             db.session.commit()
-            current_app.logger.info('Deleted computer {}, inventory id {}'.format(q.hostname, q.inventory_id))
-            response = jsonify({'status': 'ok'})
+            current_app.logger.info('Deleted computer {}, inventory id {}'.format(params['inventory_id'], delete_id))
+            response = jsonify({'status': 'ok_deleted'})
             response.status_code = 200
             return response
         elif not v['valid']:
-            response = jsonify({'status': 'err'})
+            response = jsonify({'status': 'err_invalid_token'})
             response.status_code = 401
             return response
         elif v['access_level'] != 'admin':
-            response = jsonify({'status': 'err'})
+            response = jsonify({'status': 'err_permission_denied'})
             response.status_code = 403
             return response
 
         return 200
-
-    def patch(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("token")
-        parser.add_argument("inventory_id")
-        parser.add_argument("data")
-        params = parser.parse_args()
-        return 200
-
-# {"cpu": {"model": "Intel(R) Core(TM) i7-8550U CPU", "frequency": 1800, "physical_cores": 4, "logical_cores": 8}, "ram": {"ChannelA-DIMM0": {"size": "8192 MB", "manufacturer": "Samsung", "model": "M471A1K43CB1-CRC"}, "ChannelB-DIMM0": {"size": "8192 MB", "manufacturer": "Micron", "model": "8ATF1G64HZ-2G3E1"}}, "video": {"model": "Intel Corporation UHD Graphics 620 (rev 07)"}, "storage": {"nvme0n1": {"model": "INTEL SSDPEKKF512G8L", "size": "476 GB"}}, "platform": {"bios_version": "R0RET31W (1.14 )", "manufacturer": "LENOVO", "model": "20M50011RT", "version": "SDK0J40697 WIN"}, "network": {"wlp2s0": {"ip": "192.168.88.216", "mac": "fc:77:74:1d:14:e2"}, "virbr0": {"ip": "192.168.122.1", "mac": "52:54:00:f1:64:1e"}, "docker0": {"ip": "172.17.0.1", "mac": "02:42:84:92:c3:09"}, "br-c92de87aff0d": {"ip": "172.18.0.1", "mac": "02:42:db:a4:68:b6"}}, "misc": {"os": {"distro": "Fedora", "version": "31"}}}

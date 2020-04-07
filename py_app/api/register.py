@@ -37,7 +37,7 @@ class Register(Resource):
             response.status_code = 400
             return response
         elif not valid:
-            response = jsonify({'status': 'Authorization failed'})
+            response = jsonify({'status': 'err_auth_failed'})
             response.status_code = 403
             return response
 
@@ -56,6 +56,6 @@ class Register(Resource):
             response.status_code = 200
             return response
         else:
-            response = jsonify({'status': 'Authorization failed'})
+            response = jsonify({'status': 'err_auth_failed'})
             response.status_code = 403
             return response

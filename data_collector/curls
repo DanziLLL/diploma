@@ -1,0 +1,5 @@
+curl -Lkv --header "Content-Type: application/json" --request POST --data "@good.json" http://localhost:9000/api/computer
+curl -Lkv --header "Content-Type: application/json" --request POST --data "@data.json" http://localhost:9000/api/computer
+curl -Lkv --header "Content-Type: application/json" --request POST -c cookies --data '{"login": "admin", "password": "admin"}' http://localhost:9000/api/auth
+curl -Lkv --header "Content-Type: application/json" -b cookies --request GET http://localhost:9000/api/register
+curl -Lkv --header "Content-Type: application/json" -b cookies --request DELETE --data '{"inventory_id": "not_assign"}' http://localhost:9000/api/computer
