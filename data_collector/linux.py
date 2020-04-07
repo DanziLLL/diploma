@@ -30,7 +30,7 @@ class Linux:
         Linux.__get_drives_info(rsp)
         Linux.__get_gpu(rsp)
         Linux.__get_misc(rsp)
-        print(json.dumps(rsp))
+        print(json.dumps({'data': rsp}))
         return
 
     @staticmethod
@@ -38,6 +38,7 @@ class Linux:
         rsp['misc']['os'] = {}
         rsp['misc']['os']['distro'] = platform.linux_distribution()[0]
         rsp['misc']['os']['version'] = platform.linux_distribution()[1]
+        rsp['misc']['hostname'] = platform.node()
 
 
     @staticmethod
@@ -51,7 +52,7 @@ class Linux:
                     f.close()
                 with open('/sys/class/block/{}/size'.format(i)) as f:
                     size = (int(f.readline()) * 512) // pow(2, 30)
-                    rsp['storage'][i]['size'] = '{} GB'.format(size)
+                    rsp['storage'][i]['size'] = size
                     f.close()
         return
 
@@ -93,7 +94,7 @@ class Linux:
             return
         elif entry['DMIType'] == 17:  # RAM
             rsp['ram'][entry['Locator']] = {}
-            rsp['ram'][entry['Locator']]['size'] = entry['Size']
+            rsp['ram'][entry['Locator']]['size'] = int(entry['Size'].split(' ')[0])
             rsp['ram'][entry['Locator']]['manufacturer'] = entry['Manufacturer'].rstrip()
             rsp['ram'][entry['Locator']]['model'] = entry['Part Number'].rstrip()
             return

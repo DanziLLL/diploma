@@ -8,6 +8,7 @@ import atexit
 
 app = Flask(__name__)
 app.config.from_object(Config)
+# app.config['SQLALCHEMY_ECHO'] = True
 app.config.update(
     {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.
         format(app.config['MYSQL_USER'], app.config['MYSQL_PASSWORD'])})
@@ -43,12 +44,18 @@ def create_api():
     api.add_resource(Auth, "/api/auth", "/api/auth/")
     from api.register import Register
     api.add_resource(Register, "/api/register", "/api/register/")
+    from api.computer_api import ComputerApi
+    api.add_resource(ComputerApi, "/api/computer", "/api/computer/")
 
 
 if __name__ == '__main__':
     create_logger()
 
     create_api()
+
+    from db import create_db
+
+    create_db()
 
     from cron import create_cron
     cron = create_cron()
