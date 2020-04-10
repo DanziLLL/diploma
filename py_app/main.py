@@ -12,7 +12,7 @@ app.config.from_object(Config)
 app.config.update(
     {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.
         format(app.config['MYSQL_USER'], app.config['MYSQL_PASSWORD'])})
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, session_options={'autocommit': True})
 
 
 def create_logger():
@@ -46,6 +46,14 @@ def create_api():
     api.add_resource(Register, "/api/register", "/api/register/")
     from api.computer_api import ComputerApi
     api.add_resource(ComputerApi, "/api/computer", "/api/computer/")
+    from api.users import Password
+    api.add_resource(Password, "/api/users/password", "/api/users/password/")
+    from api.users import Token
+    api.add_resource(Token, "/api/validate_token", "/api/validate_token/")
+    from api.computer_api import Changes
+    api.add_resource(Changes, "/api/computer/changes", "/api/computer/changes/")
+    from api.tasks import TasksApi
+    api.add_resource(TasksApi, "/api/tasks", "/api/tasks/")
 
 
 if __name__ == '__main__':

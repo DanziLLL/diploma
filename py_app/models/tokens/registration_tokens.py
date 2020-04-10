@@ -15,7 +15,6 @@ class RegistrationTokens(db.Model):
     def remove_expired_tokens():
         current_time = datetime.now()
         RegistrationTokens.query.filter(RegistrationTokens.expiry_date < current_time).delete()
-        db.session.commit()
 
     @staticmethod
     def is_valid_token(token):

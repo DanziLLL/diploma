@@ -30,10 +30,9 @@ services:
         container_name: pma
         ports:
             - "8081:80"
-        environment:        
+        environment:
             PMA_ARBITRARY: 1
         depends_on:
             - mariadb
         networks:
             - inv
-            

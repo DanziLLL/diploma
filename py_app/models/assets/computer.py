@@ -45,7 +45,6 @@ class Computer(db.Model):
             q.update({path[-1]: ch[2][1]})
             log = Changelog(ch[0], "{}: {} to {}".format(path, ch[2][0], ch[2][1]), computer_id)
             db.session.add(log)
-            db.session.commit()
             current_app.logger.info("UPDATED")
             return
         elif ch[0] == 'add':
@@ -60,7 +59,6 @@ class Computer(db.Model):
             db.session.add(q)
             log = Changelog(ch[0], "{}".format(ch[2][0]), computer_id)
             db.session.add(log)
-            db.session.commit()
         elif ch[0] == 'remove':
             f = {'linked_to': computer_id}
             if path[0] == 'ram':
@@ -78,7 +76,6 @@ class Computer(db.Model):
             q.delete()
             log = Changelog(ch[0], "{}".format(ch[2][0]), computer_id)
             db.session.add(log)
-            db.session.commit()
             current_app.logger.info("DELETED")
             return
 

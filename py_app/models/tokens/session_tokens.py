@@ -1,5 +1,5 @@
 from main import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class SessionTokens(db.Model):
@@ -19,12 +19,13 @@ class SessionTokens(db.Model):
     def remove_expired_tokens():
         current_time = datetime.now()
         SessionTokens.query.filter(SessionTokens.expiry_date < current_time).delete()
-        db.session.commit()
 
     @staticmethod
     def is_valid_token(token):
-        q = SessionTokens.query.filter_by(token=token).first()
-        if q is not None:
-            return {'valid': True, 'access_level': q.access_level}
+        q = SessionTokens.query.filter_by(token=token)
+        tok = q.first()
+        if tok is not None:
+            q.update({'expiry_date': datetime.now() + timedelta(minutes=30)})
+            return {'valid': True, 'access_level': tok.access_level, 'user_id': tok.user_id}
         else:
             return {'valid': False}

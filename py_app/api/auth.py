@@ -26,10 +26,9 @@ class Auth(Resource):
         else:
             token = hashlib.md5((datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
                                  + salted_pass.hexdigest()).encode('utf-8')).hexdigest()
-            expiry = datetime.now() + timedelta(hours=1)
+            expiry = datetime.now() + timedelta(minutes=30)
             entry = SessionTokens(token, expiry, usr.id, usr.access_level)
             db.session.add(entry)
-            db.session.commit()
             current_app.logger.info('User {} logged in'.format(params['login']))
             response = jsonify({'status': 'ok'})
             response.set_cookie('api_token', value=token)

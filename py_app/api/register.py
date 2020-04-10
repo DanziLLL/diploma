@@ -25,10 +25,8 @@ class Register(Resource):
         if valid and exist is None:
             usr = Users(login=params['login'], hashed_pass=salted_pass, access_level='user')
             db.session.add(usr)
-            db.session.commit()
             current_app.logger.info('Created user {}'.format(params['login']))
             RegistrationTokens.query.filter(RegistrationTokens.token == params['token']).delete()
-            db.session.commit()
             response = jsonify({'status': 'ok', 'user': params['login']})
             response.status_code = 200
             return response
@@ -51,7 +49,6 @@ class Register(Resource):
                                    + api_tok).encode('utf-8')).hexdigest()
             entry = RegistrationTokens(token=reg_tok, expiry_date=(datetime.now() + timedelta(days=1)))
             db.session.add(entry)
-            db.session.commit()
             response = jsonify({'registration_token': reg_tok})
             response.status_code = 200
             return response
