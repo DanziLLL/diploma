@@ -17,7 +17,7 @@ class Computer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     hostname = db.Column(db.String(256), unique=True, nullable=False)
-    inventory_id = db.Column(db.String(10), nullable=False)
+    inventory_id = db.Column(db.String(64), nullable=False)
 
     def __init__(self, hostname, inventory_id):
         self.hostname = hostname
@@ -44,7 +44,9 @@ class Computer(db.Model):
                 q = Video.query.filter_by(**f)
             q.update({path[-1]: ch[2][1]})
             log = Changelog(ch[0], "{}: {} to {}".format(path, ch[2][0], ch[2][1]), computer_id)
+            
             db.session.add(log)
+            db.session.commit()
             current_app.logger.info("UPDATED")
             return
         elif ch[0] == 'add':
@@ -56,9 +58,11 @@ class Computer(db.Model):
             elif path[0] == 'network':
                 current_app.logger.info(ch[2][0][0])
                 q = Network(ch[2][0][0], ch[2][0][1]['ip'], ch[2][0][1]['mac'], computer_id)
+            
             db.session.add(q)
             log = Changelog(ch[0], "{}".format(ch[2][0]), computer_id)
             db.session.add(log)
+            db.session.commit()
         elif ch[0] == 'remove':
             f = {'linked_to': computer_id}
             if path[0] == 'ram':
@@ -75,8 +79,9 @@ class Computer(db.Model):
                 q = Network.query.filter_by(**f)
             q.delete()
             log = Changelog(ch[0], "{}".format(ch[2][0]), computer_id)
+            
             db.session.add(log)
-            current_app.logger.info("DELETED")
+            db.session.commit()
             return
 
     @staticmethod

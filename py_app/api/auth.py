@@ -29,6 +29,7 @@ class Auth(Resource):
             expiry = datetime.now() + timedelta(minutes=30)
             entry = SessionTokens(token, expiry, usr.id, usr.access_level)
             db.session.add(entry)
+            db.session.commit()
             current_app.logger.info('User {} logged in'.format(params['login']))
             response = jsonify({'status': 'ok'})
             response.set_cookie('api_token', value=token)

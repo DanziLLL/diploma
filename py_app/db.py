@@ -4,7 +4,6 @@ import hashlib
 
 
 def create_db():
-    salt = Config.MD5_SALT
     from models.users import Users
     from models.assets.computer import Computer
     from models.assets.computer_items.cpu import Cpu
@@ -18,9 +17,22 @@ def create_db():
     from models.tokens.session_tokens import SessionTokens
     from models.changelog import Changelog
     from models.tasks import Tasks
-    salted_pass = hashlib.md5((salt + "admin" + "admin").encode('utf-8')).hexdigest()
     db.create_all()
+    db.session.commit()
+
+
+def create_admin():
+    from models.users import Users
+    salt = Config.MD5_SALT
     if Users.query.filter_by(login='admin').first() is None:
-        usr = Users(login='admin', hashed_pass=salted_pass, access_level='admin')
-        db.session.add(usr)
+        try:
+            salted_pass = hashlib.md5((salt + "a" + "a").encode('utf-8')).hexdigest()
+            usr = Users(login='a', hashed_pass=salted_pass, access_level='admin')
+            db.session.add(usr)
+            salted_pass = hashlib.md5((salt + "u" + "u").encode('utf-8')).hexdigest()
+            usr = Users(login='u', hashed_pass=salted_pass, access_level='user')
+            db.session.add(usr)
+            db.session.commit()
+        except:
+            db.session.rollback()
 

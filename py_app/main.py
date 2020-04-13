@@ -9,10 +9,11 @@ import atexit
 app = Flask(__name__)
 app.config.from_object(Config)
 # app.config['SQLALCHEMY_ECHO'] = True
+app.config['JSON_SORT_KEYS'] = False
 app.config.update(
-    {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mariadb/inventory_app'.
+    {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mysql/inventory_app'.
         format(app.config['MYSQL_USER'], app.config['MYSQL_PASSWORD'])})
-db = SQLAlchemy(app, session_options={'autocommit': True})
+db = SQLAlchemy(app)
 
 
 def create_logger():
@@ -54,6 +55,10 @@ def create_api():
     api.add_resource(Changes, "/api/computer/changes", "/api/computer/changes/")
     from api.tasks import TasksApi
     api.add_resource(TasksApi, "/api/tasks", "/api/tasks/")
+    from api.computer_api import QRCode
+    api.add_resource(QRCode, "/api/computer/qrcode", "/api/computer/qrcode/")
+    from api.users import Users_api
+    api.add_resource(Users_api, "/api/users", "/api/users/")
 
 
 if __name__ == '__main__':
@@ -62,8 +67,10 @@ if __name__ == '__main__':
     create_api()
 
     from db import create_db
-
     create_db()
+
+    from db import create_admin
+    create_admin()
 
     from cron import create_cron
     cron = create_cron()

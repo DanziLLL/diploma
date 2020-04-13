@@ -7,5 +7,10 @@ class Users(db.Model):
     hashed_pass = db.Column(db.String(128), unique=True, nullable=False)
     access_level = db.Column(db.String(10), nullable=False)
 
+    def __init__(self, login, hashed_pass, access_level):
+        self.login = login
+        self.hashed_pass = hashed_pass
+        self.access_level = access_level
+
     def __repr__(self):
         return '<User %r>' % self.login

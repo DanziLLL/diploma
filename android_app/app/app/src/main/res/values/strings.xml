@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">invapp</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Scan</string>
     <string name="Login">Login</string>
-    <string name="title_notifications">Notifications</string>
     <string name="scan">SCAN</string>
+    <string name="create_task">Create Task</string>
+    <string name="btn_send">CREATE</string>
 </resources>

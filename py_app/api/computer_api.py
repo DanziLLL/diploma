@@ -3,6 +3,9 @@ from flask import current_app, jsonify, request
 
 from datetime import datetime
 import json
+import qrcode
+from io import BytesIO
+import base64
 
 from models.tokens.session_tokens import SessionTokens
 from models.assets.computer import Computer
@@ -29,10 +32,12 @@ class ComputerApi(Resource):
         entry_exists = Computer.query.filter_by(hostname=hostname).first() is not None
         if hostname != 'localhost' and not entry_exists:
             # creating computer entry
-            computer_entry = Computer(hostname=item_data['misc']['hostname'], inventory_id='not_assign')
+            computer_entry = Computer(hostname=item_data['misc']['hostname'], inventory_id='invapp_c_{}'.format(hostname))
             db.session.add(computer_entry)
-            computer_id = computer_entry.id
+            db.session.commit()
+            computer_id = Computer.query.filter_by(hostname=item_data['misc']['hostname']).first().id
         if computer_id is not None:
+
             # CPU SECTION ### MO MULTICPU CONFIGURATIONS SUPPORTED YET ###
             cpu = item_data['cpu']
             cpu_entry = Cpu(cpu['model'], cpu['frequency'], cpu['physical_cores'], cpu['logical_cores'], computer_id)
@@ -62,6 +67,7 @@ class ComputerApi(Resource):
             misc_entry = Misc(misc['os']['distro'], misc['os']['version'], datetime.now(),
                               datetime.now(), "", computer_id)
             db.session.add(misc_entry)
+            db.session.commit()
             # RESPONSE
             response = jsonify({'status': 'created'})
             response.status_code = 200
@@ -70,8 +76,7 @@ class ComputerApi(Resource):
             computer_id = Computer.query.filter_by(hostname=hostname).first().id
             new = item_data
             old = Computer.get_full_dict(computer_id=computer_id)
-            changes = Computer.get_diff(json.loads(json.dumps(new, sort_keys=True)),
-                                        json.loads(json.dumps(old, sort_keys=True)))
+            changes = Computer.get_diff(new, old)
             for ch in changes:  # tuple (type_of_change, item, change)
                 current_app.logger.info(ch)
                 Computer.process_changes(ch, computer_id)
@@ -84,6 +89,7 @@ class ComputerApi(Resource):
         parser.add_argument("inventory_id")
         parser.add_argument("computer_id")
         parser.add_argument("all")
+        data = {}
         params = parser.parse_args()
         api_tok = None
         if 'api_token' in request.cookies:
@@ -97,6 +103,7 @@ class ComputerApi(Resource):
                     response.status_code = 404
                     return response
                 data = Computer.get_full_dict(q.id)
+                data['id'] = q.id
             elif params['computer_id'] is not None:
                 q = Computer.query.filter_by(id=params['computer_id']).first()
                 if q is None:
@@ -112,6 +119,17 @@ class ComputerApi(Resource):
             response = jsonify(data)
             response.status_code = 200
             return response
+        elif v['valid'] and v['access_level'] == 'user':
+            q = Computer.query.filter_by(inventory_id=params['inventory_id']).first()
+            if q is None:
+                response = jsonify({'status': 'err_not_found'})
+                response.status_code = 404
+                return response
+            else:
+                data = {'id': q.id}
+                response = jsonify(data)
+                response.status_code = 200
+                return response
         elif not v['valid']:
             response = jsonify({'status': 'err_invalid_token'})
             response.status_code = 401
@@ -168,6 +186,37 @@ class Changes(Resource):
             for i in q:
                 data[i.id] = {'change': i.entry_type, 'data': i.entry}
             response = jsonify(data)
+            response.status_code = 200
+            return response
+        elif not v['valid']:
+            response = jsonify({'status': 'err_invalid_token'})
+            response.status_code = 401
+            return response
+        elif v['access_level'] != 'admin':
+            response = jsonify({'status': 'err_permission_denied'})
+            response.status_code = 403
+            return response
+
+
+class QRCode(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("id")
+        params = parser.parse_args()
+        if 'api_token' in request.cookies:
+            api_tok = request.cookies.get('api_token')
+            v = SessionTokens.is_valid_token(api_tok)
+        else:
+            response = jsonify({'status': 'err_no_token'})
+            response.status_code = 401
+            return response
+        if v['valid'] and v['access_level'] == 'admin':
+            inv_id = Computer.query.filter_by(id=params['id']).first().inventory_id
+            buffered = BytesIO()
+            qrcode.make(inv_id).save(buffered, format="JPEG")
+            b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+            response = jsonify({'status': 'ok',
+                                'code': b64})
             response.status_code = 200
             return response
         elif not v['valid']:

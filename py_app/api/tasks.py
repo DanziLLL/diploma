@@ -32,7 +32,9 @@ class TasksApi(Resource):
                     response.status_code = 400
                     return response
             t = Tasks(params['summary'], params['body'], 'open', params['linked_to'], datetime.now(), v['user_id'])
+
             db.session.add(t)
+            db.session.commit()
             response = jsonify({'status': 'ok'})
             response.status_code = 200
             return response
@@ -45,6 +47,7 @@ class TasksApi(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("id")
         parser.add_argument("all")
+        parser.add_argument("computer_id")
         params = parser.parse_args()
         api_tok = None
         if 'api_token' in request.cookies:
@@ -56,7 +59,7 @@ class TasksApi(Resource):
         v = SessionTokens.is_valid_token(api_tok)
         if v['valid'] and v['access_level'] == 'admin':
             if params['id'] is not None:
-                q = Tasks.query.filter_by(id=params['id']).first()
+                q = Tasks.query.filter_by(id=params['id']).filter_by(status='open').first()
                 if q is not None:
                     response = jsonify({'summary': q.summary, 'body': q.body, 'linked_to': q.linked_to,
                                         'create_date': q.create_date, 'created_by': q.created_by})
@@ -68,6 +71,16 @@ class TasksApi(Resource):
                     return response
             elif params['all'] is not None:
                 q = Tasks.query.all()
+                if q is not None:
+                    data = {}
+                    for i in q:
+                        data[i.id] = {'summary': i.summary, 'body': i.body, 'linked_to': i.linked_to,
+                                      'create_date': str(i.create_date), 'created_by': i.created_by}
+                    response = jsonify(data)
+                    response.status_code = 200
+                    return response
+            elif params['computer_id'] is not None:
+                q = Tasks.query.filter_by(linked_to=params['computer_id']).filter_by(status='open').all()
                 if q is not None:
                     data = {}
                     for i in q:

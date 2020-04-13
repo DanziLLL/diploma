@@ -5,8 +5,11 @@ networks:
 
 services:
     mariadb:
-        image: mariadb:latest
-        container_name: mariadb
+        image: mysql:latest
+        command: --default-authentication-plugin=mysql_native_password --init-file /init.sql
+        volumes:
+            - ./init.sql:/init.sql
+        container_name: mysql
         ports:
             - "3306:3306"
         environment:

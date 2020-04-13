@@ -9,9 +9,27 @@ from models.tokens.session_tokens import SessionTokens
 from main import db
 
 
-class Users(Resource):
-    def post(self):
-        return 200
+class Users_api(Resource):
+    def get(self):
+        api_tok = None
+        parser = reqparse.RequestParser()
+        parser.add_argument("id")
+        params = parser.parse_args()
+        if params['id'] is None:
+            response = jsonify({'status': 'err_no_id'})
+            response.status_code = 400
+            return response
+        else:
+            login = Users.query.filter_by(id=params.id)
+            if login.first() is None:
+                response = jsonify({'status': 'err_not_found'})
+                response.status_code = 404
+                return response
+            else:
+                response = jsonify({"login": login.first().login})
+                response.status_code = 200
+                return response
+        return
 
 
 class Password(Resource):

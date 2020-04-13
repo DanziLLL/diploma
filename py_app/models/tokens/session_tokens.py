@@ -18,7 +18,18 @@ class SessionTokens(db.Model):
     @staticmethod
     def remove_expired_tokens():
         current_time = datetime.now()
-        SessionTokens.query.filter(SessionTokens.expiry_date < current_time).delete()
+        q = SessionTokens.query.filter(SessionTokens.expiry_date < current_time)
+        ids = []
+        if q.first is not None:
+            for i in q.all():
+                ids.append(i.id)
+        for i in ids:
+            try:
+                SessionTokens.query.filter_by(id=i).delete()
+                db.session.commit()
+            except:
+                db.session.rollback()
+        return
 
     @staticmethod
     def is_valid_token(token):
@@ -26,6 +37,7 @@ class SessionTokens(db.Model):
         tok = q.first()
         if tok is not None:
             q.update({'expiry_date': datetime.now() + timedelta(minutes=30)})
+            db.session.commit()
             return {'valid': True, 'access_level': tok.access_level, 'user_id': tok.user_id}
         else:
             return {'valid': False}

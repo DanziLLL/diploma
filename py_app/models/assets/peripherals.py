@@ -6,7 +6,7 @@ class Peripherals(db.Model):
     type = db.Column(db.String(256), nullable=False)
     model = db.Column(db.DateTime, nullable=False)
     inventory_id = db.Column(db.String(10), nullable=False)
-    linked_to = db.Column(db.String(10),  db.ForeignKey('computers.inventory_id'), nullable=True)
+    linked_to = db.Column(db.String(10), nullable=True)
 
     def __init__(self, type, model, inventory_id, linked_to=None):
         self.type = type
