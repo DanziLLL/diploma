@@ -213,7 +213,7 @@ class QRCode(Resource):
         if v['valid'] and v['access_level'] == 'admin':
             inv_id = Computer.query.filter_by(id=params['id']).first().inventory_id
             buffered = BytesIO()
-            qrcode.make(inv_id).save(buffered, format="JPEG")
+            qrcode.make(inv_id).save(buffered, format="PNG")
             b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
             response = jsonify({'status': 'ok',
                                 'code': b64})
