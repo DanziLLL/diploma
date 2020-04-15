@@ -87,7 +87,7 @@ class ComputerApi(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument("inventory_id")
-        parser.add_argument("computer_id")
+        parser.add_argument("id")
         parser.add_argument("all")
         data = {}
         params = parser.parse_args()
@@ -104,13 +104,13 @@ class ComputerApi(Resource):
                     return response
                 data = Computer.get_full_dict(q.id)
                 data['id'] = q.id
-            elif params['computer_id'] is not None:
-                q = Computer.query.filter_by(id=params['computer_id']).first()
+            elif params['id'] is not None:
+                q = Computer.query.filter_by(id=params['id']).first()
                 if q is None:
                     response = jsonify({'status': 'err_not_found'})
                     response.status_code = 404
                     return response
-                data = Computer.get_full_dict(computer_id=params['computer_id'])
+                data = Computer.get_full_dict(computer_id=params['id'])
             elif params['all'] is not None:
                 q = Computer.query.all()
                 data = {}
@@ -142,6 +142,7 @@ class ComputerApi(Resource):
     def delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument("inventory_id")
+        parser.add_argument("id")
         params = parser.parse_args()
         if 'api_token' in request.cookies:
             api_tok = request.cookies.get('api_token')
@@ -151,9 +152,13 @@ class ComputerApi(Resource):
             response.status_code = 401
             return response
         if v['valid'] and v['access_level'] == 'admin':
-            q = Computer.query.filter_by(inventory_id=params['inventory_id'])
+            if params['inventory_id'] is not None:
+                q = Computer.query.filter_by(inventory_id=params['inventory_id'])
+            elif params['id'] is not None:
+                q = Computer.query.filter_by(id=params['id'])
             delete_id = q.first().id
             Computer.delete_all(delete_id)
+            db.session.commit()
             current_app.logger.info('Deleted computer {}, inventory id {}'.format(params['inventory_id'], delete_id))
             response = jsonify({'status': 'ok_deleted'})
             response.status_code = 200

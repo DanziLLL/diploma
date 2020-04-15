@@ -129,6 +129,7 @@ class TasksApi(Resource):
         parser.add_argument("id")
         parser.add_argument("status")
         params = parser.parse_args()
+        current_app.logger.info(params)
         for k, v in params.items():
             if v is None:
                 response = jsonify({'status': 'err_args_missing'})
@@ -149,6 +150,7 @@ class TasksApi(Resource):
                 return response
             else:
                 q.update({'status': params['status']})
+                db.session.commit()
                 current_app.logger.info('Updated task id {}, changed status to {}'.format(params['id'], params['status']))
                 response = jsonify({'status': 'ok_updated'})
                 response.status_code = 200

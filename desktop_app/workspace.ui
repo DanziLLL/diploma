@@ -29,39 +29,49 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>20</y>
      <width>581</width>
-     <height>401</height>
+     <height>411</height>
     </rect>
    </property>
   </widget>
-  <widget class="QRadioButton" name="toggleComputer">
+  <widget class="QPushButton" name="btnRefresh">
    <property name="geometry">
     <rect>
      <x>620</x>
-     <y>30</y>
-     <width>100</width>
-     <height>21</height>
+     <y>390</y>
+     <width>161</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>Computers</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
+    <string>Reload computers list</string>
    </property>
   </widget>
-  <widget class="QRadioButton" name="togglePeripherals">
+  <widget class="QPushButton" name="btnAllTasks">
    <property name="geometry">
     <rect>
      <x>620</x>
-     <y>60</y>
-     <width>100</width>
-     <height>21</height>
+     <y>340</y>
+     <width>161</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>Peripherals</string>
+    <string>Show all tasks</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnUsers">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>290</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Users</string>
    </property>
   </widget>
  </widget>

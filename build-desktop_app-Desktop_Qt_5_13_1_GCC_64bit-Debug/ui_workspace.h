@@ -13,7 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QTableWidget>
 
 QT_BEGIN_NAMESPACE
@@ -22,8 +22,9 @@ class Ui_workspace
 {
 public:
     QTableWidget *assetsTable;
-    QRadioButton *toggleComputer;
-    QRadioButton *togglePeripherals;
+    QPushButton *btnRefresh;
+    QPushButton *btnAllTasks;
+    QPushButton *btnUsers;
 
     void setupUi(QDialog *workspace)
     {
@@ -34,14 +35,16 @@ public:
         workspace->setMaximumSize(QSize(800, 450));
         assetsTable = new QTableWidget(workspace);
         assetsTable->setObjectName(QString::fromUtf8("assetsTable"));
-        assetsTable->setGeometry(QRect(20, 30, 581, 401));
-        toggleComputer = new QRadioButton(workspace);
-        toggleComputer->setObjectName(QString::fromUtf8("toggleComputer"));
-        toggleComputer->setGeometry(QRect(620, 30, 100, 21));
-        toggleComputer->setChecked(true);
-        togglePeripherals = new QRadioButton(workspace);
-        togglePeripherals->setObjectName(QString::fromUtf8("togglePeripherals"));
-        togglePeripherals->setGeometry(QRect(620, 60, 100, 21));
+        assetsTable->setGeometry(QRect(20, 20, 581, 411));
+        btnRefresh = new QPushButton(workspace);
+        btnRefresh->setObjectName(QString::fromUtf8("btnRefresh"));
+        btnRefresh->setGeometry(QRect(620, 390, 161, 41));
+        btnAllTasks = new QPushButton(workspace);
+        btnAllTasks->setObjectName(QString::fromUtf8("btnAllTasks"));
+        btnAllTasks->setGeometry(QRect(620, 340, 161, 41));
+        btnUsers = new QPushButton(workspace);
+        btnUsers->setObjectName(QString::fromUtf8("btnUsers"));
+        btnUsers->setGeometry(QRect(620, 290, 161, 41));
 
         retranslateUi(workspace);
 
@@ -51,8 +54,9 @@ public:
     void retranslateUi(QDialog *workspace)
     {
         workspace->setWindowTitle(QCoreApplication::translate("workspace", "Dialog", nullptr));
-        toggleComputer->setText(QCoreApplication::translate("workspace", "Computers", nullptr));
-        togglePeripherals->setText(QCoreApplication::translate("workspace", "Peripherals", nullptr));
+        btnRefresh->setText(QCoreApplication::translate("workspace", "Reload computers list", nullptr));
+        btnAllTasks->setText(QCoreApplication::translate("workspace", "Show all tasks", nullptr));
+        btnUsers->setText(QCoreApplication::translate("workspace", "Users", nullptr));
     } // retranslateUi
 
 };

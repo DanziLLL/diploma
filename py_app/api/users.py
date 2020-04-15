@@ -14,12 +14,9 @@ class Users_api(Resource):
         api_tok = None
         parser = reqparse.RequestParser()
         parser.add_argument("id")
+        parser.add_argument("all")
         params = parser.parse_args()
-        if params['id'] is None:
-            response = jsonify({'status': 'err_no_id'})
-            response.status_code = 400
-            return response
-        else:
+        if params['id'] is not None:
             login = Users.query.filter_by(id=params.id)
             if login.first() is None:
                 response = jsonify({'status': 'err_not_found'})
@@ -29,7 +26,40 @@ class Users_api(Resource):
                 response = jsonify({"login": login.first().login})
                 response.status_code = 200
                 return response
-        return
+        elif params['all'] is not None:
+            q = Users.query.all()
+            data = {}
+            for i in q:
+                data[i.id] = {'login': i.login, 'access_level': i.access_level}
+            response = jsonify(data)
+            response.status_code = 200
+            return response
+        else:
+            response = jsonify({'status': 'err'})
+            response.status_code = 400
+            return response
+
+    def delete(self):
+        api_tok = None
+        parser = reqparse.RequestParser()
+        parser.add_argument("id")
+        params = parser.parse_args()
+        if 'api_token' in request.cookies:
+            api_tok = request.cookies.get('api_token')
+        v = SessionTokens.is_valid_token(api_tok)
+        if v['valid'] and v['access_level'] == 'admin':
+            if params['id'] is not None:
+                login = Users.query.filter_by(id=params.id)
+                if login.first() is None:
+                    response = jsonify({'status': 'err_not_found'})
+                    response.status_code = 404
+                    return response
+                else:
+                    login.delete()
+                    db.session.commit()
+                    response = jsonify({"status": "ok_deleted"})
+                    response.status_code = 200
+                    return response
 
 
 class Password(Resource):

@@ -16,18 +16,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    fulldataview.cpp \
     inventory_api.cpp \
     main.cpp \
     mainwindow.cpp \
+    tasksview.cpp \
+    usersview.cpp \
+    viewqr.cpp \
     workspace.cpp
 
 HEADERS += \
+    fulldataview.h \
     inventory_api.h \
     mainwindow.h \
+    tasksview.h \
+    usersview.h \
+    viewqr.h \
     workspace.h
 
 FORMS += \
+    fulldataview.ui \
     mainwindow.ui \
+    tasksview.ui \
+    usersview.ui \
+    viewqr.ui \
     workspace.ui
 
 # Default rules for deployment.
