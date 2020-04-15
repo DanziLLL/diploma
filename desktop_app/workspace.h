@@ -11,6 +11,8 @@
 #include "viewqr.h"
 #include "fulldataview.h"
 #include "tasksview.h"
+#include "usersview.h"
+#include "changelogview.h"
 
 namespace Ui {
 class workspace;
@@ -33,10 +35,12 @@ private slots:
     void slotDeleteAsset();
     void slotGetAssetData();
     void slotGetTasks();
+    void slotGetChangelog();
     void on_btnRefresh_clicked();
     void on_btnAllTasks_clicked();
     void slotCustomMenuRequested(QPoint);
     void on_btnUsers_clicked();
+    void on_btnChangelog_clicked();
 
 private:
     Ui::workspace *ui;

@@ -25,6 +25,7 @@ public:
     QPushButton *btnRefresh;
     QPushButton *btnAllTasks;
     QPushButton *btnUsers;
+    QPushButton *btnChangelog;
 
     void setupUi(QDialog *workspace)
     {
@@ -45,6 +46,9 @@ public:
         btnUsers = new QPushButton(workspace);
         btnUsers->setObjectName(QString::fromUtf8("btnUsers"));
         btnUsers->setGeometry(QRect(620, 290, 161, 41));
+        btnChangelog = new QPushButton(workspace);
+        btnChangelog->setObjectName(QString::fromUtf8("btnChangelog"));
+        btnChangelog->setGeometry(QRect(620, 240, 161, 41));
 
         retranslateUi(workspace);
 
@@ -57,6 +61,7 @@ public:
         btnRefresh->setText(QCoreApplication::translate("workspace", "Reload computers list", nullptr));
         btnAllTasks->setText(QCoreApplication::translate("workspace", "Show all tasks", nullptr));
         btnUsers->setText(QCoreApplication::translate("workspace", "Users", nullptr));
+        btnChangelog->setText(QCoreApplication::translate("workspace", "Full changelog", nullptr));
     } // retranslateUi
 
 };

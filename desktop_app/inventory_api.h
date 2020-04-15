@@ -21,6 +21,8 @@ public:
     static QString getComputerNameById(QString, int);
     static QString getRegistrationToken(QString);
     static QString registerNewUser(QString, QString, QString);
+    static void deleteUser(QString, int);
+    static QJsonDocument getChangelog(QString, int);
 
 
 };

@@ -2,6 +2,9 @@
 #define USERSVIEW_H
 
 #include <QDialog>
+#include <QAction>
+#include <QMenu>
+#include <QMessageBox>
 #include "inventory_api.h"
 
 namespace Ui {
@@ -21,6 +24,7 @@ public:
 private slots:
     void on_btnCreate_clicked();
     void slotCustomMenuRequested(QPoint);
+    void slotDeleteUser();
 
 private:
     Ui::usersview *ui;

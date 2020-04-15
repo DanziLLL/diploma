@@ -176,6 +176,7 @@ class ComputerApi(Resource):
 class Changes(Resource):
     def get(self):
         parser = reqparse.RequestParser()
+        parser.add_argument("all")
         parser.add_argument("computer_id")
         params = parser.parse_args()
         if 'api_token' in request.cookies:
@@ -185,22 +186,40 @@ class Changes(Resource):
             response = jsonify({'status': 'err_no_token'})
             response.status_code = 401
             return response
-        if v['valid'] and v['access_level'] == 'admin':
-            q = Changelog.query.filter_by(linked_to=params['computer_id']).all()
-            data = {}
-            for i in q:
-                data[i.id] = {'change': i.entry_type, 'data': i.entry}
-            response = jsonify(data)
-            response.status_code = 200
-            return response
-        elif not v['valid']:
-            response = jsonify({'status': 'err_invalid_token'})
-            response.status_code = 401
-            return response
-        elif v['access_level'] != 'admin':
-            response = jsonify({'status': 'err_permission_denied'})
-            response.status_code = 403
-            return response
+        if params['computer_id'] is not None:
+            if v['valid'] and v['access_level'] == 'admin':
+                q = Changelog.query.filter_by(linked_to=params['computer_id']).all()
+                data = {}
+                for i in q:
+                    data[i.id] = {'change': i.entry_type, 'data': i.entry}
+                response = jsonify(data)
+                response.status_code = 200
+                return response
+            elif not v['valid']:
+                response = jsonify({'status': 'err_invalid_token'})
+                response.status_code = 401
+                return response
+            elif v['access_level'] != 'admin':
+                response = jsonify({'status': 'err_permission_denied'})
+                response.status_code = 403
+                return response
+        elif params['all'] is not None:
+            if v['valid'] and v['access_level'] == 'admin':
+                q = Changelog.query.all()
+                data = {}
+                for i in q:
+                    data[i.id] = {'change': i.entry_type, 'data': i.entry, 'linked_to': i.linked_to}
+                response = jsonify(data)
+                response.status_code = 200
+                return response
+            elif not v['valid']:
+                response = jsonify({'status': 'err_invalid_token'})
+                response.status_code = 401
+                return response
+            elif v['access_level'] != 'admin':
+                response = jsonify({'status': 'err_permission_denied'})
+                response.status_code = 403
+                return response
 
 
 class QRCode(Resource):

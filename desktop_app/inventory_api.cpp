@@ -254,7 +254,7 @@ QString inventory_api::getRegistrationToken(QString token) {
 QString inventory_api::registerNewUser(QString login, QString password, QString registration_token) {
     QString api_token = "";
     QNetworkAccessManager nam;
-    QNetworkRequest request(api_url + "/auth");
+    QNetworkRequest request(api_url + "/register");
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QJsonObject json;
     json.insert("login", login);
@@ -296,5 +296,30 @@ void inventory_api::deleteUser(QString token, int id) {
     if (reply->error() == reply->NoError) {
         QByteArray response_data = reply->readAll();
         QJsonDocument json_response = QJsonDocument::fromJson(response_data);
+    }
+}
+
+QJsonDocument inventory_api::getChangelog(QString token, int id) {
+    QNetworkAccessManager nam;
+    QNetworkRequest request;
+    if (id == 0) {
+        request.setUrl(api_url + QString("/computer/changes?all=true"));
+    }
+    else {
+        request.setUrl(api_url + QString("/computer/changes?computer_id=%1").arg(id));
+    }
+    request.setRawHeader("Cookie", QString("api_token=%1").arg(token).toUtf8());
+    QNetworkReply *reply = nam.get(request);
+    while (!reply->isFinished())
+    {
+        qApp->processEvents();
+    }
+    if (reply->error() == reply->NoError) {
+        QByteArray response_data = reply->readAll();
+        QJsonDocument json_response = QJsonDocument::fromJson(response_data);
+        return json_response;
+    }
+    else {
+        return QJsonDocument();
     }
 }

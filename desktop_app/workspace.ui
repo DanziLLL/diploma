@@ -74,6 +74,19 @@
     <string>Users</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnChangelog">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>240</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Full changelog</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

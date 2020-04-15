@@ -7,6 +7,8 @@ usersview::usersview(QWidget *parent, QString token) :
 {
     ui->setupUi(this);
     api_token = token;
+    ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotCustomMenuRequested(QPoint)));
     viewusers();
 }
 
@@ -44,14 +46,24 @@ void usersview::slotCustomMenuRequested(QPoint pos)
 {
     QMenu * menu = new QMenu(this);
     QAction* del = new QAction("Delete", this);
-    connect(del, SIGNAL(triggered()), this, SLOT(slotDeleteAsset()));
+    connect(del, SIGNAL(triggered()), this, SLOT(slotDeleteUser()));
     menu->addAction(del);
+    QAction* asd = new QAction("qweqwe", this);
+    connect(asd, SIGNAL(triggered()), this, SLOT(slotDeleteUser()));
+    menu->addAction(asd);
     menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
 }
 
 void usersview::on_btnCreate_clicked()
 {
-
+    if (ui->passEdit->text() == ui->confirmEdit->text()) {
+        inventory_api::registerNewUser(ui->loginEdit->text(), ui->passEdit->text(), inventory_api::getRegistrationToken(api_token));
+    }
+    else {
+        QMessageBox::critical(this, "Error", "Passwords are not equal");
+    }
+    ui->tableWidget->setRowCount(0);
+    viewusers();
 }
 
 void usersview::slotDeleteUser() {

@@ -60,6 +60,9 @@ void workspace::slotCustomMenuRequested(QPoint pos)
     QAction* tasks = new QAction("Get linked tasks", this);
     connect(tasks, SIGNAL(triggered()), this, SLOT(slotGetTasks()));
     menu->addAction(tasks);
+    QAction* changelog = new QAction("Get changelog", this);
+    connect(changelog, SIGNAL(triggered()), this, SLOT(slotGetChangelog()));
+    menu->addAction(changelog);
     QAction* del = new QAction("Delete", this);
     connect(del, SIGNAL(triggered()), this, SLOT(slotDeleteAsset()));
     menu->addAction(del);
@@ -107,6 +110,14 @@ void workspace::slotGetTasks() {
     v->show();
 }
 
+void workspace::slotGetChangelog() {
+    int id = 0;
+    QList<QTableWidgetItem *> list = ui->assetsTable->selectedItems();
+    id = list.at(0)->text().toInt();
+    changelogview *v = new changelogview(this, api_token, id);
+    v->show();
+}
+
 void workspace::refresh() {
     ui->assetsTable->setRowCount(0);
     viewComputers(inventory_api::getAllComputers(api_token));
@@ -125,5 +136,12 @@ void workspace::on_btnAllTasks_clicked()
 
 void workspace::on_btnUsers_clicked()
 {
+    usersview *v = new usersview(this, api_token);
+    v->show();
+}
 
+void workspace::on_btnChangelog_clicked()
+{
+    changelogview *v = new changelogview(this, api_token, 0);
+    v->show();
 }
