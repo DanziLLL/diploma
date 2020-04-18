@@ -46,7 +46,7 @@ public:
 
     void retranslateUi(QDialog *viewQR)
     {
-        viewQR->setWindowTitle(QCoreApplication::translate("viewQR", "Dialog", nullptr));
+        viewQR->setWindowTitle(QCoreApplication::translate("viewQR", "QR Code", nullptr));
         QRView->setText(QString());
         toClipboard->setText(QCoreApplication::translate("viewQR", "To Clipboard", nullptr));
         exit->setText(QCoreApplication::translate("viewQR", "Exit", nullptr));

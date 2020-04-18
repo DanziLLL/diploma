@@ -75,7 +75,6 @@ public class scanActivity extends AppCompatActivity implements View.OnClickListe
                         try {
                             data = response.getJSONObject("data");
                             data_json = data.toString();
-                            Log.e("CONVERSION", "" + data_json );
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -1,6 +1,6 @@
 #include "inventory_api.h"
 
-const QString api_url = "http://inventoryapp.example.com:9001/api";
+const QString api_url = "http://inventoryapp.example.com:9000/api";
 
 inventory_api::inventory_api()
 {

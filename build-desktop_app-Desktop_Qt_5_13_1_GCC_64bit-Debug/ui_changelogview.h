@@ -38,7 +38,7 @@ public:
 
     void retranslateUi(QDialog *changelogview)
     {
-        changelogview->setWindowTitle(QCoreApplication::translate("changelogview", "Dialog", nullptr));
+        changelogview->setWindowTitle(QCoreApplication::translate("changelogview", "Changelog", nullptr));
     } // retranslateUi
 
 };

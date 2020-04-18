@@ -70,7 +70,7 @@ class TasksApi(Resource):
                     response.status_code = 404
                     return response
             elif params['all'] is not None:
-                q = Tasks.query.all()
+                q = Tasks.query.filter_by(status='open').all()
                 if q is not None:
                     data = {}
                     for i in q:

@@ -8,7 +8,6 @@ import atexit
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# app.config['SQLALCHEMY_ECHO'] = True
 app.config['JSON_SORT_KEYS'] = False
 app.config.update(
     {'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://{}:{}@mysql/inventory_app'.
@@ -59,6 +58,7 @@ def create_api():
     api.add_resource(QRCode, "/api/computer/qrcode", "/api/computer/qrcode/")
     from api.users import Users_api
     api.add_resource(Users_api, "/api/users", "/api/users/")
+
 
 
 if __name__ == '__main__':

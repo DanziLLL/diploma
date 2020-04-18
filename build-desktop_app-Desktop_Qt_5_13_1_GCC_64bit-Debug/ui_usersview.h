@@ -63,12 +63,12 @@ public:
 
     void retranslateUi(QDialog *usersview)
     {
-        usersview->setWindowTitle(QCoreApplication::translate("usersview", "Dialog", nullptr));
+        usersview->setWindowTitle(QCoreApplication::translate("usersview", "Users", nullptr));
         loginEdit->setText(QString());
         loginEdit->setPlaceholderText(QCoreApplication::translate("usersview", "Login", nullptr));
         passEdit->setPlaceholderText(QCoreApplication::translate("usersview", "Password", nullptr));
         confirmEdit->setText(QString());
-        confirmEdit->setPlaceholderText(QCoreApplication::translate("usersview", "Comfirm password", nullptr));
+        confirmEdit->setPlaceholderText(QCoreApplication::translate("usersview", "Confirm password", nullptr));
         btnCreate->setText(QCoreApplication::translate("usersview", "Create user", nullptr));
         label->setText(QCoreApplication::translate("usersview", "Add new user", nullptr));
     } // retranslateUi

@@ -53,7 +53,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Login", nullptr));
         btn_go->setText(QCoreApplication::translate("MainWindow", "Go", nullptr));
 #if QT_CONFIG(shortcut)
         btn_go->setShortcut(QCoreApplication::translate("MainWindow", "Return", nullptr));

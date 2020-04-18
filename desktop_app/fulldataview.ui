@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Asset Data</string>
   </property>
   <widget class="QTextBrowser" name="dataView">
    <property name="geometry">

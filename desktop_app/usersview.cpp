@@ -48,9 +48,6 @@ void usersview::slotCustomMenuRequested(QPoint pos)
     QAction* del = new QAction("Delete", this);
     connect(del, SIGNAL(triggered()), this, SLOT(slotDeleteUser()));
     menu->addAction(del);
-    QAction* asd = new QAction("qweqwe", this);
-    connect(asd, SIGNAL(triggered()), this, SLOT(slotDeleteUser()));
-    menu->addAction(asd);
     menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
 }
 

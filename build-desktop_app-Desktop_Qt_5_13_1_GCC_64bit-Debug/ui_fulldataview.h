@@ -44,7 +44,7 @@ public:
 
     void retranslateUi(QDialog *FullDataView)
     {
-        FullDataView->setWindowTitle(QCoreApplication::translate("FullDataView", "Dialog", nullptr));
+        FullDataView->setWindowTitle(QCoreApplication::translate("FullDataView", "Asset Data", nullptr));
         exit->setText(QCoreApplication::translate("FullDataView", "Exit", nullptr));
     } // retranslateUi
 

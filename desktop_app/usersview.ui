@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Users</string>
   </property>
   <widget class="QTableWidget" name="tableWidget">
    <property name="geometry">
@@ -71,7 +71,7 @@
     <enum>QLineEdit::PasswordEchoOnEdit</enum>
    </property>
    <property name="placeholderText">
-    <string>Comfirm password</string>
+    <string>Confirm password</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnCreate">

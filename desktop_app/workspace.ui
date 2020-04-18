@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Inventory App</string>
   </property>
   <widget class="QTableWidget" name="assetsTable">
    <property name="geometry">

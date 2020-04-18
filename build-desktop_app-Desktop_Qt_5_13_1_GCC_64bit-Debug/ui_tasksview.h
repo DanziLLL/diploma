@@ -38,7 +38,7 @@ public:
 
     void retranslateUi(QDialog *tasksview)
     {
-        tasksview->setWindowTitle(QCoreApplication::translate("tasksview", "Dialog", nullptr));
+        tasksview->setWindowTitle(QCoreApplication::translate("tasksview", "Tasks", nullptr));
     } // retranslateUi
 
 };

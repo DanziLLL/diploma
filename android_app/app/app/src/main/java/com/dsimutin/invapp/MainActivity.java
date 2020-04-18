@@ -103,7 +103,6 @@ public class MainActivity extends Activity  {
 
     public void getAccessLevel(){
         String url = apiUrl + "/validate_token";
-        Log.e("GAL", "getAccessLevel: " + apiToken);
         JSONObject payload = new JSONObject();
         final VolleyResponseListener v_listener = new VolleyResponseListener() {
             @Override

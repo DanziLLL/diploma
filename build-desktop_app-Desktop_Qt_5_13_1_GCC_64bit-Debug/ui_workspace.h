@@ -57,7 +57,7 @@ public:
 
     void retranslateUi(QDialog *workspace)
     {
-        workspace->setWindowTitle(QCoreApplication::translate("workspace", "Dialog", nullptr));
+        workspace->setWindowTitle(QCoreApplication::translate("workspace", "Inventory App", nullptr));
         btnRefresh->setText(QCoreApplication::translate("workspace", "Reload computers list", nullptr));
         btnAllTasks->setText(QCoreApplication::translate("workspace", "Show all tasks", nullptr));
         btnUsers->setText(QCoreApplication::translate("workspace", "Users", nullptr));
