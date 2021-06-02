@@ -5,4 +5,4 @@ netifaces==0.10.9
 psutil==5.7.0
 py-dmidecode==0.1.0
 requests==2.23.0
-urllib3==1.25.9
+urllib3==1.26.5
